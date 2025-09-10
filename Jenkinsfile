@@ -20,12 +20,16 @@ pipeline {
             }
         }
 
-        // STAGE 3: Install dependencies
+        // STAGE 3: Install dependencies inside virtual environment
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Python dependencies...'
-                // 'sh' runs shell commands. Here we install everything from requirements.txt
-                sh 'pip install -r requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
 
@@ -33,9 +37,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo 'Running Selenium tests...'
-                // We run pytest and generate the HTML report.
-                // '|| true' ensures the pipeline continues even if tests fail, so we can publish the report.
-                sh 'pytest --html=report.html || true'
+                sh '''
+                    . venv/bin/activate
+                    pytest --html=report.html || true
+                '''
             }
         }
     }
@@ -44,7 +49,6 @@ pipeline {
         // This 'post' block runs after all stages are complete, regardless of success or failure.
         always {
             echo 'Archiving test report...'
-            // Use the HTML Publisher plugin to archive and display our report.
             publishHTML(target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
