@@ -5,12 +5,20 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium_cicd_project.pages.login_page import LoginPage
 from selenium_cicd_project.pages.inventory_page import InventoryPage
+from selenium.webdriver.chrome.options import Options
 
 
 @pytest.fixture
 def driver():
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-    driver.implicitly_wait(10)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    driver = webdriver.Chrome(
+        service=ChromeService(ChromeDriverManager().install()),
+        options=chrome_options
+    )
     yield driver
     driver.quit()
 
