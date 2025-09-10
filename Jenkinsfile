@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout from Git') {
             steps {
                 echo 'Checking out code from GitHub...'
-                git branch: 'main', url: 'https://github.com/YourUsername/selenium-cicd-project.git'
+                git branch: 'main', url: 'https://github.com/Jameel6265/selenium-cicd-project.git'
             }
         }
 
